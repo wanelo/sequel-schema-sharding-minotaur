@@ -1,0 +1,32 @@
+require 'simple_runner'
+require 'open3'
+
+module ShardMonitor
+  class Runner < SimpleRunner
+    run do
+      begin
+        shards = stdout.read_nonblock(1024)
+        ShardMonitor.redis do |redis|
+          time = Time.now.to_i
+          redis.rpush(time, shards.split("\n").map(&:to_i))
+          redis.expire(time, 120)
+        end
+      rescue IO::WaitReadable
+        IO.select([stdout])
+        retry
+      end
+    end
+
+    def self.stdout
+      @stdout ||= begin
+        stdin, stdout, _ = Open3.popen2(trace_command)
+        stdin.close
+        stdout
+      end
+    end
+
+    def self.trace_command
+      File.expand_path('../../../bin/trace', __FILE__)
+    end
+  end
+end
