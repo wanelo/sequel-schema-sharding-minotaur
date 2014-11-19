@@ -26,5 +26,11 @@ module Reporter
       :long => '--debug',
       :description => 'Enable debug logging',
       :default => false
+
+    option :dry_run,
+      :short => '-n',
+      :long => '--dry-run',
+      :description => 'Skip sending data',
+      :default => false
   end
 end
