@@ -13,16 +13,18 @@ module Reporter
 
       unless shards.empty?
         body = Reporter::BodyBuilder.new(shards).lift
-        writer.write(body)
+        writers.each { |w| w.write(body) }
       end
 
       sleep Reporter.config.poll_interval
     end
 
-    def writer
-      @writer ||= Reporter.config.dry_run ?
-        Reporter::Writers::Pipe.new(STDOUT) :
-        Reporter::Writers::Circonus.new(Reporter.config.circonus)
+    attr_reader :writers
+
+    def initialize
+      @writers = []
+      writers << Reporter::Writers::Pipe.new(STDOUT) if Reporter.config.debug
+      writers << Reporter::Writers::Circonus.new(Reporter.config.circonus) unless Reporter.config.dry_run
     end
   end
 end
