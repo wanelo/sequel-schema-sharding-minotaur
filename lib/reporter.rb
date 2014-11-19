@@ -3,8 +3,8 @@ require 'reporter/config'
 require 'reporter/runner'
 
 module Reporter
-  def self.config
-    @config ||= Reporter::Config.new.tap { |c| c.parse_options }
+  def self.config(argv = ARGV)
+    @config ||= Reporter::Config.new.tap { |c| c.parse_options(argv) }
   end
 
   def self.redis
