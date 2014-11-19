@@ -4,8 +4,14 @@ class SimpleConfig
   include Mixlib::CLI
 
   def method_missing(meth, *args, &blk)
-    return config[meth] if config.has_key?(meth)
-    super
+    if config.has_key?(meth)
+      self.class.send(:define_method, meth) do
+        config[meth]
+      end
+      config[meth]
+    else
+      super
+    end
   end
 
   def respond_to?(meth, include_private = false)
