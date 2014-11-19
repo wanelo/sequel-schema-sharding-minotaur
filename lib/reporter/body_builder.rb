@@ -8,7 +8,7 @@ module Reporter
 
     def body
       {
-        'key' => {
+        'shard_number' => {
           '_type' => 'n',
           '_value' => shards.flatten
         }
