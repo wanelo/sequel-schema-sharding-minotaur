@@ -1,3 +1,7 @@
+require 'net/http'
+require 'reporter/body_builder'
+require 'reporter/data'
+require 'reporter/writers'
 require 'simple_runner'
 
 module Reporter
@@ -5,30 +9,20 @@ module Reporter
     include SimpleRunner
 
     run do
-      shards = nil
-      Reporter.redis do |redis|
-        timestamps = redis.keys '*'
-        shards = redis.pipelined do
-          timestamps.map do |t|
-            redis.lrange t, 0, -1
-            redis.del t
-          end
-        end
-      end
+      shards = Reporter::Data.new.to_a
 
       unless shards.empty?
-        body = {
-          'key' => {
-            '_type' => 'n',
-            '_value' => shards.flatten
-          }
-        }
-
-        # Push to circonus
-        puts body if Reporter.config.debug
+        body = Reporter::BodyBuilder.new(shards).lift
+        writer.write(body)
       end
 
       sleep Reporter.config.poll_interval
+    end
+
+    def writer
+      @writer ||= Reporter.config.dry_run ?
+        Reporter::Writers::Pipe.new(STDOUT) :
+        Reporter::Writers::Circonus.new(Reporter.config.circonus)
     end
   end
 end
