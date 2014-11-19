@@ -1,13 +1,11 @@
-require 'mixlib/cli'
+require 'simple_config'
 
 module Reporter
-  class Config
-    include Mixlib::CLI
-
+  class Config < SimpleConfig
     option :redis,
       :short => '-u REDIS_URI',
       :long  => '--redis REDIS_URI',
-      :description => 'URI with which to connect to redis, eg: redis://1.1.1.1/1',
+      :description => 'URI with which to connect to redis, (default redis://127.0.0.1/1)',
       :default => 'redis://127.0.0.1/1'
 
     option :circonus,
@@ -23,16 +21,10 @@ module Reporter
       :default => 60,
       :proc => Proc.new { |i| i.to_i }
 
-    def circonus
-      config[:circonus]
-    end
-
-    def redis
-      config[:redis]
-    end
-
-    def poll_interval
-      config[:poll_interval]
-    end
+    option :debug,
+      :short => '-d',
+      :long => '--debug',
+      :description => 'Enable debug logging',
+      :default => false
   end
 end

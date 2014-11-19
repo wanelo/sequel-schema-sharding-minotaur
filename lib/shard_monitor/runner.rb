@@ -2,7 +2,9 @@ require 'simple_runner'
 require 'open3'
 
 module ShardMonitor
-  class Runner < SimpleRunner
+  class Runner
+    include SimpleRunner
+
     run do
       begin
         shards = stdout.read_nonblock(1024)
@@ -17,7 +19,7 @@ module ShardMonitor
       end
     end
 
-    def self.stdout
+    def stdout
       @stdout ||= begin
         stdin, stdout, _ = Open3.popen2(trace_command)
         stdin.close
@@ -25,7 +27,7 @@ module ShardMonitor
       end
     end
 
-    def self.trace_command
+    def trace_command
       File.expand_path('../../../bin/trace', __FILE__)
     end
   end

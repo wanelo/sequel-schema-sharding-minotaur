@@ -1,9 +1,7 @@
-require 'mixlib/cli'
+require 'simple_config'
 
 module ShardMonitor
-  class Config
-    include Mixlib::CLI
-
+  class Config < SimpleConfig
     option :redis,
       :short => '-u REDIS_URI',
       :long  => '--redis REDIS_URI',

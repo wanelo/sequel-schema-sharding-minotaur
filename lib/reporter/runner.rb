@@ -1,12 +1,13 @@
 require 'simple_runner'
 
 module Reporter
-  class Runner < SimpleRunner
+  class Runner
+    include SimpleRunner
+
     run do
       shards = nil
       Reporter.redis do |redis|
         timestamps = redis.keys '*'
-        shards = []
         shards = redis.pipelined do
           timestamps.map do |t|
             redis.lrange t, 0, -1
@@ -24,6 +25,7 @@ module Reporter
         }
 
         # Push to circonus
+        puts body if Reporter.config.debug
       end
 
       sleep Reporter.config.poll_interval

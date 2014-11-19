@@ -1,4 +1,4 @@
-class SimpleRunner
+module SimpleRunner
   def run
     trap_signals
     main_loop
@@ -19,7 +19,7 @@ class SimpleRunner
     }
   end
 
-  def self.inherited(base)
+  def self.included(base)
     base.instance_eval do
       def self.run(&blk)
         @runner = blk
@@ -28,10 +28,14 @@ class SimpleRunner
   end
 
   def main_loop
-    runner = self.class.instance_variable_get(:@runner)
-    raise unless runner
+    blk = self.class.instance_variable_get(:@runner)
+    raise unless blk
+    self.instance_eval do
+      self.class.send(:define_method, :runner, &blk)
+    end
+
     until exiting?
-      runner.call
+      runner
     end
   rescue Interrupt
     exit 0
