@@ -5,6 +5,8 @@ GEM
       timers (~> 4.0.0)
     coderay (1.1.0)
     diff-lcs (1.2.5)
+    fakeredis (0.5.0)
+      redis (~> 3.0)
     ffi (1.9.6)
     formatador (0.2.5)
     guard (2.8.2)
@@ -53,6 +55,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  fakeredis
   guard-rspec
   mixlib-cli
   redis
