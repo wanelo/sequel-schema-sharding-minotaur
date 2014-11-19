@@ -5,12 +5,16 @@ module Reporter
     class Circonus
       attr_reader :uri
 
+      ::OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
+
       def initialize(url)
         @uri = URI(url)
       end
 
       def write(body)
-        Net::HTTP.post_form(uri, body)
+        Net::HTTP.start(uri.hostname, uri.port) do |http|
+          http.request_post(uri.path, body)
+        end
       end
     end
   end
