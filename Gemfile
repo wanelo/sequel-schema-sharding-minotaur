@@ -1,6 +1,7 @@
 source "https://rubygems.org"
 
 gem 'mixlib-cli'
+gem 'oj'
 gem 'redis'
 
 group :test, :development do
