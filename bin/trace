@@ -1,6 +1,0 @@
-#!/usr/sbin/dtrace -qs
-
-:sequel_schema_sharding::shard_for
-{
-  printf("%d\n", arg1)
-}
