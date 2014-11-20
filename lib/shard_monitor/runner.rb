@@ -28,7 +28,7 @@ module ShardMonitor
     end
 
     def trace_command
-      File.expand_path("../../../bin/trace.d #{ShardMonitor.config.table_name}", __FILE__)
+      %Q(/usr/sbin/dtrace -q -n ':sequel_schema_sharding::shard_for / copyinstr(arg2) == "#{ShardMonitor.config.table_name}" / { printf("%d\\n", arg1) })
     end
   end
 end
