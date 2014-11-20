@@ -28,7 +28,7 @@ module ShardMonitor
     end
 
     def trace_command
-      File.expand_path("../../../bin/trace.d #{Redis.config.table_name}", __FILE__)
+      File.expand_path("../../../bin/trace.d #{ShardMonitor.config.table_name}", __FILE__)
     end
   end
 end
